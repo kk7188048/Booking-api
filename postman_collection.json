@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "Session Booking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "userId", "value": "" },
+    { "key": "teacherId", "value": "" },
+    { "key": "sessionId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/users",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"1234567890\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();",
+              "pm.collectionVariables.set('userId', data._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Teacher",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/teachers",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Jane Teacher\",\n  \"email\": \"jane@teach.com\",\n  \"specialization\": \"Mathematics\",\n  \"experience\": 5\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();",
+              "pm.collectionVariables.set('teacherId', data._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Session",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/sessions",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"startTime\": \"2026-10-25T10:00:00.000Z\",\n  \"endTime\": \"2026-10-25T11:00:00.000Z\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();",
+              "pm.collectionVariables.set('sessionId', data._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Available Sessions",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/sessions/available?dateTimestamp=1792972800000",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "available"],
+          "query": [{ "key": "dateTimestamp", "value": "1792972800000" }]
+        }
+      }
+    },
+    {
+      "name": "Book Session",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/sessions/{{sessionId}}/book",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Complete Session",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/sessions/{{sessionId}}/complete"
+      }
+    },
+    {
+      "name": "Get User Sessions",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/users/{{userId}}/sessions"
+      }
+    }
+  ]
+}
